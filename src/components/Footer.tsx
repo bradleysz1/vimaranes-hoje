@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Mail } from 'lucide-react'
 
 export default function Footer() {
@@ -8,11 +9,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo e Descrição */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-guimaraes-gold rounded-lg flex items-center justify-center">
-                <span className="text-gray-900 font-bold">G</span>
-              </div>
-              <h3 className="text-xl font-bold">Vimaranes Hoje</h3>
+            <div className="mb-4">
+              <Image
+                src="/logo.png"
+                alt="Vimaranes Hoje"
+                width={200}
+                height={80}
+                className="h-12 w-auto brightness-0 invert"
+              />
             </div>
             <p className="text-gray-300 mb-4">
               O seu portal de notícias local de Guimarães. Mantemos os vimaranenses informados sobre 

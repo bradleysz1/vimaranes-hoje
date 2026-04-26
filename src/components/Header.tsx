@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Menu, X, Search } from 'lucide-react'
 
 export default function Header() {
@@ -21,16 +22,15 @@ export default function Header() {
       <div className="container-custom">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-guimaraes-blue rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">G</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                Vimaranes Hoje
-              </h1>
-              <p className="text-sm text-gray-600">Cidade Berço</p>
-            </div>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="Vimaranes Hoje"
+              width={200}
+              height={80}
+              className="h-16 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
