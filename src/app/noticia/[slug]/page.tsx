@@ -12,7 +12,37 @@ interface NewsPageProps {
 
 export default async function NewsPage({ params }: NewsPageProps) {
   const { slug } = await params
-  const news = await getNewsBySlug(slug)
+  
+  // Dados de exemplo para fallback
+  const exampleNews = {
+    'festival-musica-tradicional-guimaraes': {
+      title: 'Guimarães recebe festival de música tradicional este fim de semana',
+      content: '<p>O centro histórico de Guimarães vai acolher, este fim de semana, mais uma edição do Festival de Música Tradicional.</p>',
+      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+      category: 'Cultura',
+      author: 'Maria Silva',
+      publishedAt: '2024-01-15',
+    }
+  }
+  
+  let news = exampleNews[slug as keyof typeof exampleNews]
+  
+  // Tenta buscar do Supabase
+  try {
+    const supabaseNews = await getNewsBySlug(slug)
+    if (supabaseNews) {
+      news = {
+        title: supabaseNews.title,
+        content: supabaseNews.content || supabaseNews.excerpt,
+        image: supabaseNews.image,
+        category: supabaseNews.categories?.name || 'Notícia',
+        author: supabaseNews.authors?.name || 'Redação',
+        publishedAt: supabaseNews.published_at,
+      }
+    }
+  } catch (error) {
+    console.log('Usando dados de exemplo')
+  }
   
   if (!news) {
     notFound()
@@ -34,12 +64,9 @@ export default async function NewsPage({ params }: NewsPageProps) {
       {/* Header */}
       <header className="mb-8">
         <div className="mb-4">
-          <Link 
-            href={`/categoria/${news.categories?.slug || 'noticias'}`}
-            className="inline-block bg-guimaraes-blue text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
-          >
-            {news.categories?.name || 'Notícia'}
-          </Link>
+          <span className="inline-block bg-guimaraes-blue text-white px-3 py-1 rounded-full text-sm font-medium">
+            {news.category}
+          </span>
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
@@ -49,11 +76,11 @@ export default async function NewsPage({ params }: NewsPageProps) {
         <div className="flex items-center text-gray-600 space-x-6">
           <div className="flex items-center space-x-2">
             <User className="w-5 h-5" />
-            <span className="font-medium">{news.authors?.name || 'Redação'}</span>
+            <span className="font-medium">{news.author}</span>
           </div>
           <div className="flex items-center space-x-2">
             <Clock className="w-5 h-5" />
-            <span>{new Date(news.published_at).toLocaleDateString('pt-PT', {
+            <span>{new Date(news.publishedAt).toLocaleDateString('pt-PT', {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -79,7 +106,7 @@ export default async function NewsPage({ params }: NewsPageProps) {
       <div className="max-w-4xl mx-auto">
         <div 
           className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: news.content || news.excerpt }}
+          dangerouslySetInnerHTML={{ __html: news.content }}
         />
       </div>
 
@@ -105,7 +132,14 @@ export default async function NewsPage({ params }: NewsPageProps) {
 }
 
 export async function generateStaticParams() {
-  // Para export estático, retorna um array vazio
-  // As páginas dinâmicas serão geradas sob demanda
-  return []
+  // Retorna os slugs das notícias de exemplo
+  return [
+    { slug: 'festival-musica-tradicional-guimaraes' },
+    { slug: 'guimaraes-mobilidade-sustentavel-2026' },
+    { slug: 'vitoria-sc-taca-portugal-2026' },
+    { slug: 'vimaranes-hub-dois-anos-2026' },
+    { slug: 'festival-gastronomia-2026' },
+    { slug: 'guimaraes-empreendedor-primeira-edicao' },
+    { slug: 'castelo-guimaraes-restauracao-2026' },
+  ]
 }
