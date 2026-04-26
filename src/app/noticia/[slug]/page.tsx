@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Clock, User, ArrowLeft } from 'lucide-react'
-import { noticias } from '@/data/noticias'
+import { supabase } from '@/lib/supabase'
 
 interface NewsPageProps {
   params: Promise<{
@@ -12,7 +12,17 @@ interface NewsPageProps {
 
 export default async function NewsPage({ params }: NewsPageProps) {
   const { slug } = await params
-  const noticia = noticias.find(n => n.slug === slug)
+  
+  const { data: noticia } = await supabase
+    .from('news')
+    .select(`
+      *,
+      categories(name, slug),
+      authors(name)
+    `)
+    .eq('slug', slug)
+    .eq('published', true)
+    .single()
   
   if (!noticia) {
     notFound()
@@ -35,22 +45,22 @@ export default async function NewsPage({ params }: NewsPageProps) {
       <header className="mb-8">
         <div className="mb-4">
           <span className="inline-block bg-guimaraes-blue text-white px-3 py-1 rounded-full text-sm font-medium">
-            {noticia.categoria}
+            {noticia.categories?.name}
           </span>
         </div>
         
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-          {noticia.titulo}
+          {noticia.title}
         </h1>
         
         <div className="flex items-center text-gray-600 space-x-6">
           <div className="flex items-center space-x-2">
             <User className="w-5 h-5" />
-            <span className="font-medium">{noticia.autor}</span>
+            <span className="font-medium">{noticia.authors?.name}</span>
           </div>
           <div className="flex items-center space-x-2">
             <Clock className="w-5 h-5" />
-            <span>{new Date(noticia.data).toLocaleDateString('pt-PT', {
+            <span>{new Date(noticia.published_at).toLocaleDateString('pt-PT', {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -62,8 +72,8 @@ export default async function NewsPage({ params }: NewsPageProps) {
       {/* Featured Image */}
       <div className="relative h-96 md:h-[500px] mb-8 rounded-lg overflow-hidden">
         <Image
-          src={noticia.imagem}
-          alt={noticia.titulo}
+          src={noticia.image}
+          alt={noticia.title}
           fill
           className="object-cover"
           priority
@@ -74,7 +84,7 @@ export default async function NewsPage({ params }: NewsPageProps) {
       <div className="max-w-4xl mx-auto">
         <div 
           className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: noticia.conteudo }}
+          dangerouslySetInnerHTML={{ __html: noticia.content }}
         />
       </div>
 
@@ -100,9 +110,14 @@ export default async function NewsPage({ params }: NewsPageProps) {
 }
 
 export async function generateStaticParams() {
+  const { data: noticias } = await supabase
+    .from('news')
+    .select('slug')
+    .eq('published', true)
+  
   // Se não houver notícias, retorna um array com um slug de exemplo
   // para evitar erro de build
-  if (noticias.length === 0) {
+  if (!noticias || noticias.length === 0) {
     return [{ slug: 'exemplo' }]
   }
   

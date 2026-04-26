@@ -1,59 +1,64 @@
 # Vimaranes Hoje
 
-Portal de notícias local da cidade de Guimarães, desenvolvido com Next.js, Tailwind CSS e Supabase.
+Site de notícias de Guimarães desenvolvido com Next.js 15, TypeScript, Tailwind CSS e Supabase.
 
-## 🚀 Tecnologias
+## 🚀 Deploy
 
-- **Next.js 15** - Framework React com SSR/SSG
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Framework CSS utilitário
-- **Supabase** - Backend-as-a-Service (PostgreSQL)
-- **Lucide React** - Ícones modernos
+O site está hospedado no Netlify: https://vimaranes-hoje.netlify.app/
 
-## 📦 Instalação
+## 📝 Como Adicionar Notícias
 
-1. Clone o repositório:
+### Opção 1: Painel Administrativo (Recomendado)
+
+1. Acesse: https://vimaranes-hoje.netlify.app/admin
+2. Digite a senha: `vimaranes2026`
+3. Preencha o formulário com:
+   - **Título**: Título da notícia
+   - **Resumo**: Breve descrição que aparece na lista
+   - **Conteúdo Completo**: Texto principal (pode usar HTML: `<p>`, `<h2>`, `<ul>`, `<li>`)
+   - **URL da Imagem**: Link da imagem (pode usar Unsplash.com)
+   - **Categoria**: Selecione uma categoria
+   - **Autor**: Nome do autor
+   - **Destaque**: Marque para aparecer em destaque na homepage
+4. Clique em "Criar Notícia"
+
+### Opção 2: Diretamente no Supabase
+
+Acesse o painel do Supabase e insira dados na tabela `news`.
+
+## 🗄️ Banco de Dados
+
+O site usa Supabase (PostgreSQL) com as seguintes tabelas:
+- `news`: Notícias
+- `categories`: Categorias
+- `authors`: Autores
+
+Execute o script `database/schema.sql` no seu projeto Supabase para criar as tabelas.
+
+## 🛠️ Desenvolvimento Local
+
 ```bash
-git clone <url-do-repositorio>
-cd vimaranes-hoje
-```
-
-2. Instale as dependências:
-```bash
+# Instalar dependências
 npm install
-```
 
-3. Configure as variáveis de ambiente:
-```bash
-cp .env.example .env.local
-```
+# Configurar variáveis de ambiente
+# Copie .env.example para .env.local e preencha com suas credenciais do Supabase
 
-4. Edite o arquivo `.env.local` com suas credenciais do Supabase.
-
-5. Execute o projeto:
-```bash
+# Executar em desenvolvimento
 npm run dev
+
+# Build para produção
+npm run build
+npm start
 ```
 
-## 🗄️ Estrutura da Base de Dados
+## 📦 Tecnologias
 
-### Tabela `news`
-```sql
-CREATE TABLE news (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  excerpt TEXT,
-  content TEXT,
-  image VARCHAR(500),
-  category VARCHAR(100),
-  author VARCHAR(100),
-  slug VARCHAR(255) UNIQUE,
-  featured BOOLEAN DEFAULT false,
-  published_at TIMESTAMP DEFAULT NOW(),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
-```
+- **Next.js 15**: Framework React
+- **TypeScript**: Tipagem estática
+- **Tailwind CSS**: Estilização
+- **Supabase**: Banco de dados PostgreSQL
+- **Netlify**: Hospedagem
 
 ## 🎨 Cores do Tema
 
@@ -61,30 +66,10 @@ CREATE TABLE news (
 - **Dourado**: `#d4af37`
 - **Verde**: `#059669`
 
-## 📱 Funcionalidades
+## 🔐 Segurança
 
-- ✅ Design responsivo
-- ✅ SEO otimizado
-- ✅ Navegação por categorias
-- ✅ Sistema de busca
-- ✅ Newsletter
-- ✅ Redes sociais
-- 🔄 Sistema de comentários (em desenvolvimento)
-- 🔄 Painel administrativo (em desenvolvimento)
-
-## 🚀 Deploy
-
-### Vercel (Recomendado)
-1. Conecte seu repositório ao Vercel
-2. Configure as variáveis de ambiente
-3. Deploy automático a cada push
-
-### Netlify
-1. Conecte seu repositório ao Netlify
-2. Configure as variáveis de ambiente
-3. Build command: `npm run build`
-4. Publish directory: `.next`
+A senha do painel administrativo está definida no código (`vimaranes2026`). Para produção, considere implementar autenticação mais robusta com Supabase Auth.
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT.
+Projeto desenvolvido para Vimaranes Hoje.
