@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { Clock, User, ArrowLeft } from 'lucide-react'
 
 interface NewsPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 // Dados de exemplo - depois vamos buscar do Supabase
@@ -32,8 +32,9 @@ const newsData = {
   }
 }
 
-export default function NewsPage({ params }: NewsPageProps) {
-  const news = newsData[params.slug as keyof typeof newsData]
+export default async function NewsPage({ params }: NewsPageProps) {
+  const { slug } = await params
+  const news = newsData[slug as keyof typeof newsData]
   
   if (!news) {
     notFound()

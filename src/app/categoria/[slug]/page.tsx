@@ -1,12 +1,6 @@
 import { notFound } from 'next/navigation'
 import NewsGrid from '@/components/NewsGrid'
 
-interface CategoryPageProps {
-  params: {
-    slug: string
-  }
-}
-
 const categories = {
   'politica': 'Política',
   'cultura': 'Cultura',
@@ -19,8 +13,9 @@ const categories = {
   'gastronomia': 'Gastronomia'
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const categoryName = categories[params.slug as keyof typeof categories]
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const categoryName = categories[slug as keyof typeof categories]
   
   if (!categoryName) {
     notFound()
