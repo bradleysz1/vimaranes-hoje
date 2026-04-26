@@ -13,6 +13,37 @@ function generateSlug(titulo: string): string {
     .replace(/-+/g, '-') // Remove hífens duplicados
 }
 
+// GET - Listar todas as notícias
+export async function GET() {
+  try {
+    const { data, error } = await supabase
+      .from('news')
+      .select(`
+        *,
+        categories(name, slug),
+        authors(name)
+      `)
+      .order('published_at', { ascending: false })
+
+    if (error) {
+      console.error('Erro ao buscar notícias:', error)
+      return NextResponse.json(
+        { error: 'Erro ao buscar notícias: ' + error.message },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(data || [])
+  } catch (error) {
+    console.error('Erro no servidor:', error)
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST - Criar nova notícia
 export async function POST(request: Request) {
   try {
     const body = await request.json()

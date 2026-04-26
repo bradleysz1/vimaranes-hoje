@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -57,9 +58,17 @@ export default function AdminPage() {
       <div className="container-custom">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">
-              Criar Nova Notícia
-            </h1>
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-3xl font-bold text-gray-900">
+                Criar Nova Notícia
+              </h1>
+              <Link
+                href="/admin/editar"
+                className="text-guimaraes-blue hover:text-blue-700 font-medium"
+              >
+                Ver todas as notícias →
+              </Link>
+            </div>
             
             <NoticiaForm />
           </div>
