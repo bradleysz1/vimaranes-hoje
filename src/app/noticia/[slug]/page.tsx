@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Clock, User, ArrowLeft } from 'lucide-react'
+import { getNewsBySlug } from '@/lib/supabase'
 
 interface NewsPageProps {
   params: Promise<{
@@ -9,32 +10,9 @@ interface NewsPageProps {
   }>
 }
 
-// Dados de exemplo - depois vamos buscar do Supabase
-const newsData = {
-  'festival-musica-tradicional-guimaraes': {
-    id: 1,
-    title: 'Guimarães recebe festival de música tradicional este fim de semana',
-    content: `
-      <p>O centro histórico de Guimarães vai acolher, este fim de semana, mais uma edição do Festival de Música Tradicional, um evento que celebra as raízes musicais da região e promove a preservação do património cultural imaterial.</p>
-      
-      <p>O festival, que decorre entre sexta-feira e domingo, vai contar com a participação de vários grupos folclóricos locais, bem como artistas convidados de outras regiões do país. As atuações terão lugar em diversos pontos emblemáticos da cidade, incluindo o Largo da Oliveira, o Paço dos Duques e o Castelo de Guimarães.</p>
-      
-      <p>"Este festival é uma oportunidade única para os vimaranenses e visitantes conhecerem melhor as nossas tradições musicais", afirmou o presidente da Câmara Municipal durante a apresentação do evento.</p>
-      
-      <p>Para além das atuações musicais, o festival inclui também workshops de instrumentos tradicionais, exposições temáticas e uma feira de artesanato local. A entrada é gratuita em todas as atividades.</p>
-      
-      <p>O programa completo está disponível no site oficial da Câmara Municipal de Guimarães e nas redes sociais do evento.</p>
-    `,
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    category: 'Cultura',
-    author: 'Maria Silva',
-    publishedAt: '2024-01-15',
-  }
-}
-
 export default async function NewsPage({ params }: NewsPageProps) {
   const { slug } = await params
-  const news = newsData[slug as keyof typeof newsData]
+  const news = await getNewsBySlug(slug)
   
   if (!news) {
     notFound()
@@ -57,10 +35,10 @@ export default async function NewsPage({ params }: NewsPageProps) {
       <header className="mb-8">
         <div className="mb-4">
           <Link 
-            href={`/categoria/${news.category.toLowerCase()}`}
+            href={`/categoria/${news.categories?.slug || 'noticias'}`}
             className="inline-block bg-guimaraes-blue text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors"
           >
-            {news.category}
+            {news.categories?.name || 'Notícia'}
           </Link>
         </div>
         
@@ -71,11 +49,11 @@ export default async function NewsPage({ params }: NewsPageProps) {
         <div className="flex items-center text-gray-600 space-x-6">
           <div className="flex items-center space-x-2">
             <User className="w-5 h-5" />
-            <span className="font-medium">{news.author}</span>
+            <span className="font-medium">{news.authors?.name || 'Redação'}</span>
           </div>
           <div className="flex items-center space-x-2">
             <Clock className="w-5 h-5" />
-            <span>{new Date(news.publishedAt).toLocaleDateString('pt-PT', {
+            <span>{new Date(news.published_at).toLocaleDateString('pt-PT', {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -85,21 +63,23 @@ export default async function NewsPage({ params }: NewsPageProps) {
       </header>
 
       {/* Featured Image */}
-      <div className="relative h-96 md:h-[500px] mb-8 rounded-lg overflow-hidden">
-        <Image
-          src={news.image}
-          alt={news.title}
-          fill
-          className="object-cover"
-          priority
-        />
-      </div>
+      {news.image && (
+        <div className="relative h-96 md:h-[500px] mb-8 rounded-lg overflow-hidden">
+          <Image
+            src={news.image}
+            alt={news.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
 
       {/* Content */}
       <div className="max-w-4xl mx-auto">
         <div 
           className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: news.content }}
+          dangerouslySetInnerHTML={{ __html: news.content || news.excerpt }}
         />
       </div>
 
@@ -124,8 +104,8 @@ export default async function NewsPage({ params }: NewsPageProps) {
   )
 }
 
-export function generateStaticParams() {
-  return Object.keys(newsData).map((slug) => ({
-    slug,
-  }))
+export async function generateStaticParams() {
+  // Para export estático, retorna um array vazio
+  // As páginas dinâmicas serão geradas sob demanda
+  return []
 }
