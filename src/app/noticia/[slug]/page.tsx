@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { Clock, User, ArrowLeft } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
+// Forçar revalidação a cada requisição
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface NewsPageProps {
   params: Promise<{
     slug: string
@@ -110,18 +114,6 @@ export default async function NewsPage({ params }: NewsPageProps) {
 }
 
 export async function generateStaticParams() {
-  const { data: noticias } = await supabase
-    .from('news')
-    .select('slug')
-    .eq('published', true)
-  
-  // Se não houver notícias, retorna um array com um slug de exemplo
-  // para evitar erro de build
-  if (!noticias || noticias.length === 0) {
-    return [{ slug: 'exemplo' }]
-  }
-  
-  return noticias.map((noticia) => ({
-    slug: noticia.slug,
-  }))
+  // Retornar array vazio para gerar páginas sob demanda
+  return []
 }

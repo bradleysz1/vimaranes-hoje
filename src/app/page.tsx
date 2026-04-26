@@ -2,6 +2,10 @@ import Hero from '@/components/Hero'
 import NewsGrid from '@/components/NewsGrid'
 import FeaturedNews from '@/components/FeaturedNews'
 
+// Forçar revalidação a cada requisição
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function Home() {
   return (
     <div>

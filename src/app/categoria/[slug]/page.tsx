@@ -4,6 +4,10 @@ import Link from 'next/link'
 import { Clock, User } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
+// Forçar revalidação a cada requisição
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const categories = {
   'politica': 'Política',
   'cultura': 'Cultura',
