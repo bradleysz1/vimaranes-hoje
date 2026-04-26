@@ -100,6 +100,12 @@ export default async function NewsPage({ params }: NewsPageProps) {
 }
 
 export async function generateStaticParams() {
+  // Se não houver notícias, retorna um array com um slug de exemplo
+  // para evitar erro de build
+  if (noticias.length === 0) {
+    return [{ slug: 'exemplo' }]
+  }
+  
   return noticias.map((noticia) => ({
     slug: noticia.slug,
   }))
