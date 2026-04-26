@@ -123,3 +123,9 @@ export default async function NewsPage({ params }: NewsPageProps) {
     </article>
   )
 }
+
+export function generateStaticParams() {
+  return Object.keys(newsData).map((slug) => ({
+    slug,
+  }))
+}
