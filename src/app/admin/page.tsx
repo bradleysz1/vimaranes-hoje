@@ -95,14 +95,18 @@ function NoticiaForm() {
         body: JSON.stringify(formData),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
         alert('Notícia criada com sucesso!')
         router.push('/')
       } else {
-        alert('Erro ao criar notícia')
+        alert('Erro ao criar notícia: ' + (data.error || 'Erro desconhecido'))
+        console.error('Erro detalhado:', data)
       }
     } catch (error) {
-      alert('Erro ao criar notícia')
+      alert('Erro ao criar notícia: ' + (error instanceof Error ? error.message : 'Erro desconhecido'))
+      console.error('Erro:', error)
     } finally {
       setLoading(false)
     }
